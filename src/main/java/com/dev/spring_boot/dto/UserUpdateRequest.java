@@ -1,20 +1,20 @@
 package com.dev.spring_boot.dto;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private String password;
-    private LocalDate birthday;
+    String firstName;
+    String lastName;
+    String email;
+    String phoneNumber;
+    String password;
+    LocalDate birthday;
 }

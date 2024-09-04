@@ -2,29 +2,31 @@ package com.dev.spring_boot.dto;
 
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
 
-    private String firstName;
+    String firstName;
 
-    private String lastName;
+    String lastName;
 
-    @Size(min=3, message = "INVALID_USERNAME")
-    private String username;
+    @Size(min = 3, message = "INVALID_USERNAME")
+    String username;
 
-    private String email;
+    String email;
 
-    private String phoneNumber;
+    String phoneNumber;
 
-    @Size(min=8, message = "INVALID_PASSWORD")
-    private String password;
+    @Size(min = 8, message = "INVALID_PASSWORD")
+    String password;
 
-    private LocalDate birthday;
+    LocalDate birthday;
 }

@@ -5,6 +5,7 @@ import com.dev.spring_boot.dto.UserUpdateRequest;
 import com.dev.spring_boot.entity.User;
 import com.dev.spring_boot.exception.AppException;
 import com.dev.spring_boot.exception.ErrorCode;
+import com.dev.spring_boot.mapper.UserMapper;
 import com.dev.spring_boot.repositoty.UserRepository;
 import com.dev.spring_boot.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,21 +17,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public User createUser(UserCreationRequest request) {
-        User newUser = new User();
         if(userRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
+        User newUser = userMapper.toUser(request);
 
-
-        newUser.setUsername(request.getUsername());
-        newUser.setBirthday(request.getBirthday());
-        newUser.setEmail(request.getEmail());
-        newUser.setFirstName(request.getFirstName());
-        newUser.setLastName(request.getLastName());
-        newUser.setPassword(request.getPassword());
-        newUser.setPhoneNumber(request.getPhoneNumber());
         return userRepository.save(newUser);
     }
 
@@ -48,12 +42,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(String userId, UserUpdateRequest request) {
        User user = getUser(userId);
-       user.setPhoneNumber(request.getPhoneNumber());
-       user.setPassword(request.getPassword());
-       user.setFirstName(request.getFirstName());
-       user.setLastName(request.getLastName());
-       user.setEmail(request.getEmail());
-       user.setBirthday(request.getBirthday());
+       userMapper.updateUser(request,user);
 
        return userRepository.save(user);
     }
