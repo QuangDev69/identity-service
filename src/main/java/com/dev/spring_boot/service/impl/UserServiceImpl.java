@@ -7,6 +7,7 @@ import com.dev.spring_boot.exception.AppException;
 import com.dev.spring_boot.exception.ErrorCode;
 import com.dev.spring_boot.mapper.UserMapper;
 import com.dev.spring_boot.repositoty.UserRepository;
+import com.dev.spring_boot.response.UserResponse;
 import com.dev.spring_boot.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,16 +36,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String userId) {
-        return userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+    public UserResponse getUser(String userId) {
+        return userMapper.toUserResponse(userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found")));
     }
 
     @Override
-    public User updateUser(String userId, UserUpdateRequest request) {
-       User user = getUser(userId);
-       userMapper.updateUser(request,user);
-
-       return userRepository.save(user);
+    public UserResponse updateUser(String userId, UserUpdateRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found"));
+       userMapper.updateUser(request, user);
+       return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
