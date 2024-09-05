@@ -10,6 +10,8 @@ import com.dev.spring_boot.repositoty.UserRepository;
 import com.dev.spring_boot.response.UserResponse;
 import com.dev.spring_boot.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +27,8 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
         User newUser = userMapper.toUser(request);
-
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         return userRepository.save(newUser);
     }
 
