@@ -1,6 +1,5 @@
 package com.dev.spring_boot.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,9 +10,6 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)//field nao null thi khong hien thi
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ApiResponse<T> {
-    @Builder.Default
-    int code = 1000;
-    String message;
-    T result;
+public class IntrospectRequest {
+    String token;
 }
