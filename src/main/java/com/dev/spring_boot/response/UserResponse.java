@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -12,19 +13,15 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
+    String id;
     String firstName;
 
     String lastName;
 
-    @Size(min = 3, message = "INVALID_USERNAME")
     String username;
 
-    String email;
-
-    String phoneNumber;
-
-    @Size(min = 8, message = "INVALID_PASSWORD")
-    String password;
 
     LocalDate birthday;
+
+    Set<String> roles;
 }

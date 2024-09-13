@@ -1,38 +1,28 @@
 package com.dev.spring_boot.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-
-@Entity
-@Data
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
-    private String firstName;
-    private String lastName;
-
-    private String username;
-
-    private String email;
-
-    private String phoneNumber;
-
-
-    private String password;
-
-    private LocalDate birthday;
-
-
+    String id;
+    String username;
+    String password;
+    String firstName;
+    String lastName;
+    LocalDate birthday;
+    @ElementCollection
+    Set<String> roles;
 }

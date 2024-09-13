@@ -8,6 +8,10 @@ import com.dev.spring_boot.response.UserResponse;
 import com.dev.spring_boot.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,28 +19,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@Slf4j
 public class  UserController {
     private final UserService userService;
     @PostMapping
-    ApiResponse<User> createUser(@RequestBody  @Valid UserCreationRequest userDTO) {
-        ApiResponse<User> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.createUser(userDTO));
-        return apiResponse;
+    ApiResponse<UserResponse> createUser(@RequestBody  @Valid UserCreationRequest userDTO) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.createUser(userDTO)).build();
     }
 
-
     @GetMapping
-    ApiResponse<List<User>> getUsers() {
-        ApiResponse<List<User>> apiResponse = new ApiResponse<>();
+    @PreAuthorize("hasRole('ADMIN')")
+    ApiResponse<List<UserResponse>> getUsers() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
+
+        ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getUsers());
         return apiResponse;
     }
 
     @GetMapping("/{userId}")
+    @PostAuthorize("returnObject.result.username == authentication.name")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.getUser(userId));
-        return apiResponse;
+        return ApiResponse.<UserResponse>builder().
+                result(userService.getUser(userId))
+                .build();
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder().
+                result(userService.getMyInfo())
+                .build();
     }
 
 

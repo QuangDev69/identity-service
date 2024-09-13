@@ -2,6 +2,7 @@ package com.dev.spring_boot.service.impl;
 
 import com.dev.spring_boot.dto.AuthenticationRequest;
 import com.dev.spring_boot.dto.IntrospectRequest;
+import com.dev.spring_boot.entity.User;
 import com.dev.spring_boot.exception.AppException;
 import com.dev.spring_boot.exception.ErrorCode;
 import com.dev.spring_boot.repositoty.UserRepository;
@@ -20,11 +21,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
         if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-        var token = generaToken(request.getUsername());
+        var token = generaToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -72,16 +75,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    private String generaToken(String username) {
+    private String generaToken(User user) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("custom", "claim")
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -94,5 +97,15 @@ public class AuthServiceImpl implements AuthService {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    private String buildScope( User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        log.warn("user.getRoles(): "+user.getRoles());
+        if(!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(stringJoiner::add);
+        }
+        return stringJoiner.toString();
     }
 }

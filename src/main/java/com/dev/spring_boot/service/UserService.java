@@ -8,13 +8,15 @@ import com.dev.spring_boot.response.UserResponse;
 import java.util.List;
 
 public interface UserService  {
-    User createUser(UserCreationRequest userDTO);
+    UserResponse createUser(UserCreationRequest userDTO);
 
-    List<User> getUsers();
+    List<UserResponse> getUsers();
 
     UserResponse getUser(String userId);
 
     UserResponse updateUser(String userId, UserUpdateRequest request);
+
+    UserResponse getMyInfo();
 
     void deleteUser(String userId);
 }
